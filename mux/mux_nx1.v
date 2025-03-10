@@ -1,3 +1,4 @@
+
 `timescale 1ns/1ns
 
 
@@ -27,7 +28,7 @@ reg [NUM_INP-1:0] inp;
 reg [NUM_SEL-1:0]sel;
 wire out;
 
-mux_nx1 dut(inp, sel, out);
+mux_8x1 dut(inp, sel, out);
 
 initial begin
 	$monitor("time=%0t, inp=%0b, sel=%0d, out=%0b", $time, inp, sel, out);
