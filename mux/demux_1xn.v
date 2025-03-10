@@ -1,16 +1,15 @@
 `timescale 1ns/1ns
 
+module demux_1xn(inp, sel, out);
 
-module mux_nx1(inp, sel, out);
+parameter NUM_OUT=8;
+parameter NUM_SEL=$clog2(NUM_OUT);
 
-parameter NUM_INP=8;
-parameter NUM_SEL=$clog2(NUM_INP);
+input inp;
+input [NUM_SEL-1:0] sel;
+output wire [NUM_OUT-1:0] out;
 
-input [NUM_INP-1:0] inp;
-input [NUM_SEL-1:0]sel;
-output out;
-
-assign out = inp[sel];
+assign out[sel] = inp;
 
 endmodule
 
@@ -20,19 +19,19 @@ endmodule
 module tb();
 
 
-parameter NUM_INP=8;
-parameter NUM_SEL=$clog2(NUM_INP);
+parameter NUM_OUT=8;
+parameter NUM_SEL=$clog2(NUM_OUT);
 
-reg [NUM_INP-1:0] inp;
+reg inp;
 reg [NUM_SEL-1:0]sel;
-wire out;
+wire [NUM_OUT-1:0] out;
 
-mux_nx1 dut(inp, sel, out);
+demux_1xn dut(inp, sel, out);
 
 initial begin
 	$monitor("time=%0t, inp=%0b, sel=%0d, out=%0b", $time, inp, sel, out);
 	
-	inp=8'b10110011; 
+	inp=1'b1; 
 	sel=3'b000; #5;
 	sel=3'b001; #5;
 	sel=3'b010; #5;
