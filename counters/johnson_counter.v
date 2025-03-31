@@ -1,27 +1,27 @@
 //=========================================================================
 //=========================================================================
-//                             RING COUNTER
+//                             JOHNSON COUNTER
 //=========================================================================
 //
-//	Functionality: Output of last ff is fed as input to first ff
-//	States: for n ff --> n states
+//	Functionality: inverted output of last ff is fed as input to first ff
+//	States: for n ff --> 2n states
 //
 //=========================================================================
 //=========================================================================
 
 
-module ring_counter(clk, rst, out);
+module johnson_counter(clk, rst, out);
 
-parameter NUM_FF=8;
+parameter NUM_FF=4;
 
 input clk, rst;
 output reg [NUM_FF-1:0] out;
 
 always @(posedge clk) begin
 	if(rst)
-		out='b1; // reset state start with "0001"
+		out='b0; // reset state start with "0000"
 	else 
-		out <= {out[0], out[NUM_FF-1:1]};
+		out <= {~out[0], out[NUM_FF-1:1]};
 end
 
 endmodule
@@ -30,12 +30,12 @@ endmodule
 
 module tb();
 
-parameter NUM_FF=8;
+parameter NUM_FF=4;
 
 reg clk, rst;
 wire [NUM_FF-1:0] out;
 
-ring_counter #(.NUM_FF(8)) dut(clk, rst, out);
+johnson_counter #(.NUM_FF(4)) dut(clk, rst, out);
 
 initial begin
 	clk=0;
