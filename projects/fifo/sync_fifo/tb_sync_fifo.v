@@ -7,6 +7,7 @@ reg [WIDTH-1:0] wr_data;
 wire wr_error, rd_error, full, empty;
 wire [WIDTH-1:0] rd_data;
 
+integer i;
 reg [8*30:0] testname;
 
 fifo dut(clk, rst, wr_en, rd_en, wr_error, rd_error, wr_data, rd_data, full, empty);
