@@ -1,0 +1,101 @@
+`include "sync_fifo.v"
+module tb();
+
+parameter DEPTH=16, WIDTH=8, PTR_WIDTH=4;
+reg clk, rst, rd_en, wr_en;
+reg [WIDTH-1:0] wr_data;
+wire wr_error, rd_error, full, empty;
+wire [WIDTH-1:0] rd_data;
+
+reg [WIDTH-1:0] mem [DEPTH-1:0];
+reg [PTR_WIDTH-1:0] wr_ptr, rd_ptr;
+reg wr_toggle_f, rd_toggle_f;
+integer i, m, n;
+reg [8*30:0] testname;
+integer wr_delay, rd_delay;
+
+fifo dut(clk, rst, wr_en, rd_en, wr_error, rd_error, wr_data, rd_data, full, empty);
+
+always begin
+	clk = 0; #5;
+	clk = 1; #5;
+end
+
+initial begin
+
+	$value$plusargs("testname=%s",testname);
+	rst=1;
+	rd_en=0; wr_en=0;
+	#20
+	rst=0;
+
+	case(testname)
+		"test_full" : begin 
+			write_data(DEPTH);
+		end
+		"test_initial_empty" : begin
+			read_data(DEPTH);
+		end
+		"test_empty" : begin
+			write_data(DEPTH);
+			read_data(DEPTH);
+		end
+		"test_full_error" : begin
+			write_data(20);
+		end
+		"test_empty_error" : begin 
+			write_data(5);
+			read_data(6);
+		end
+		"test_wr_rd" : begin
+			repeat(16) begin
+				// wr tx
+    			@(posedge clk);
+				rd_en=0;
+    			wr_en=1;
+    			wr_data=1;
+				@(posedge clk); // wait for last tx to take effect
+				wr_en=0; // disable wr tx
+				@(posedge clk); // wait for wr_en=0 to take effect
+
+				// rd tx
+    			@(posedge clk);
+				rd_en=1;
+    			wr_en=0;
+				@(posedge clk); // wait for last tx to take effect
+				rd_en=0; // disable wr tx
+				@(posedge clk); // wait for wr_en=0 to take effect
+			end
+		end
+	endcase
+	$finish;
+end
+
+task write_data(input integer wr_depth);
+begin
+	for(i=0; i<wr_depth; i=i+1) begin
+    	@(posedge clk);
+		rd_en=0;
+    	wr_en=1;
+    	wr_data=i*2;
+    end
+	@(posedge clk); // wait for last tx to take effect
+	wr_en=0; // disable wr tx
+	@(posedge clk); // wait for wr_en=0 to take effect
+end
+endtask
+
+task read_data(input integer rd_depth);
+begin
+	for(i=0; i<rd_depth; i=i+1) begin
+    	@(posedge clk);
+		wr_en=0;
+    	rd_en=1;
+	end
+	@(posedge clk); // wait for last tx to take effect
+	rd_en=0; // disable wr tx
+	@(posedge clk); // wait for wr_en=0 to take effect
+end
+endtask
+
+endmodule
