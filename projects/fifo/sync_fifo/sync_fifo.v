@@ -1,6 +1,7 @@
 module fifo(clk, rst, wr_en, rd_en, wr_error, rd_error, wr_data, rd_data, full, empty);
 
-parameter DEPTH=16, WIDTH=8, PTR_WIDTH=4;
+parameter DEPTH=16, WIDTH=8;
+parameter PTR_WIDTH=$clog2(DEPTH);
 
 input clk, rst, rd_en, wr_en;
 input [WIDTH-1:0] wr_data;
@@ -8,8 +9,7 @@ output reg wr_error, rd_error, full, empty;
 output reg [WIDTH-1:0] rd_data;
 
 reg [WIDTH-1:0] mem [DEPTH-1:0];
-reg [PTR_WIDTH:0] wr_ptr, rd_ptr; // want to count till DEPTH=1 so
-//reg wr_toggle_f;// rd_toggle_f;
+reg [PTR_WIDTH:0] wr_ptr, rd_ptr; // want to count till DEPTH=16 so
 integer i;
 
 always @(posedge clk) begin
@@ -17,7 +17,6 @@ always @(posedge clk) begin
 		wr_error=0;	rd_error=0;
 		full=0; empty=0;
 		rd_data=0;
-		//wr_toggle_f=0; //rd_toggle_f=0;	
 		wr_ptr=0; rd_ptr=0;
 
 		for(i=0; i<DEPTH; i=i+1)
@@ -30,7 +29,7 @@ always @(posedge clk) begin
 			if(full == 0) begin
 				mem[wr_ptr]=wr_data;
 				wr_error=0;
-				wr_ptr=wr_ptr+1; // write inc only during data write times
+				wr_ptr=wr_ptr+1; // write inc only during data write times when fifo is not empty
 			end
 			else
 				wr_error=1; // full=1
@@ -67,25 +66,5 @@ always @(*) begin
 		full=0; empty=0;
 	end
 end
-
-
-/*
-always @(rd_ptr or wr_ptr) begin
-	if(wr_ptr==DEPTH)
-		wr_ptr=0; // roll over wr_ptr to start from begining index of fifo
-	if(rd_ptr==DEPTH)
-		rd_ptr=0; // roll over rd_ptr
-end
-*/
-
-/*
-always @(*) begin
-	empty=0; full=0;
-	if(wr_ptr == rd_ptr) begin
-		if(wr_toggle_f == rd_toggle_f) begin empty=1; full=0; end // doesn'nt test for condition when trying to initially read
-		if(wr_toggle_f != rd_toggle_f) begin full=1; empty=0; end
-	end
-end
-*/			
 
 endmodule
