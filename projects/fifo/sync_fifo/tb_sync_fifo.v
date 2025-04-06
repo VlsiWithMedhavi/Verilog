@@ -7,12 +7,7 @@ reg [WIDTH-1:0] wr_data;
 wire wr_error, rd_error, full, empty;
 wire [WIDTH-1:0] rd_data;
 
-reg [WIDTH-1:0] mem [DEPTH-1:0];
-reg [PTR_WIDTH-1:0] wr_ptr, rd_ptr;
-reg wr_toggle_f, rd_toggle_f;
-integer i, m, n;
 reg [8*30:0] testname;
-integer wr_delay, rd_delay;
 
 fifo dut(clk, rst, wr_en, rd_en, wr_error, rd_error, wr_data, rd_data, full, empty);
 
