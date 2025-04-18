@@ -1,0 +1,35 @@
+APB(Advanced peripheral bus) protocol
+=====================================
+
+Part of AMBA(Advanced microcontroller bus architecture) protocol family
+AMBA divided into many types
+ 	1. APB (Advanced peripheral bus)
+	2. AHB (Advanced high performance bus)
+	3. ASB (Advanced system bus)
+	4. AXI (Advanced auxiliary bus)
+The microcontroller is connected to AHB/ASB which further connects to low bandwidth APB via APB Bridge. 
+ - APB bridge(master)
+ - Devices connected to APB(slave)
+
+
+What is APB?
+Protocol is used for accessing control registers of peripheral devices(slave
+devices).
+	- Simple Synchronous peripheral protocol.
+	- Each transfer takes atleast 2 clock cycles (SETUP and ACCESS) to complete.
+	- Not pipelined
+	- Connects low BW peripheral : USB, keyboard, timer, etc
+
+
+Why APB?
+	- low cost
+	- minimal power consumptions
+	- reduced interface complexity
+
+Disadvantages of APB
+	- limited bandwidth
+	- used with low speed peripheral devices only
+	- reduced efficiency
+Can be used with: USB, UART, keyboard, clock, i/o modules which require less
+bandwidth
+	
