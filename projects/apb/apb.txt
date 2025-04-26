@@ -19,6 +19,7 @@ devices).
 	- Each transfer takes atleast 2 clock cycles (SETUP and ACCESS) to complete.
 	- Not pipelined
 	- Connects low BW peripheral : USB, keyboard, timer, etc
+	- data read|write cant occur at the same time
 
 
 Why APB?
